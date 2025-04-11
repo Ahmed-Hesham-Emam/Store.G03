@@ -31,6 +31,7 @@ namespace Presentation
             return Ok(result);
             }
 
+        //api/products/brands
         [HttpGet("brands")]
         public async Task<IActionResult> GetAllBrands()
             {
@@ -39,6 +40,7 @@ namespace Presentation
             return Ok(result);
             }
 
+        //api/products/types
         [HttpGet("types")]
         public async Task<IActionResult> GetAllTypes()
             {
