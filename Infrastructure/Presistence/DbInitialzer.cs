@@ -24,7 +24,7 @@ namespace Presistence
             // Create the database and apply Pending migrations
             #region Migrations
 
-            if (_context.Database.GetPendingMigrations().Any())
+            if ( _context.Database.GetPendingMigrations().Any() )
                 {
                 await _context.Database.MigrateAsync();
                 }
@@ -37,7 +37,7 @@ namespace Presistence
             #region Product Types Seeding
 
             // Check if the ProductTypes table is empty before seeding
-            if (!_context.ProductTypes.Any())
+            if ( !_context.ProductTypes.Any() )
                 {
 
                 // Read the JSON file containing the product types data
@@ -46,7 +46,7 @@ namespace Presistence
 
                 // Deserialize the JSON data into a list of ProductType objects
                 var productTypes = JsonSerializer.Deserialize<List<ProductType>>(typesData);
-                if (productTypes is not null && productTypes.Any())
+                if ( productTypes is not null && productTypes.Any() )
                     {
                     // Add the product types to the database context
                     await _context.ProductTypes.AddRangeAsync(productTypes);
@@ -59,7 +59,7 @@ namespace Presistence
             #region Product Brands Seeding
 
             // Check if the ProductBrands table is empty before seeding
-            if (!_context.ProductBrands.Any())
+            if ( !_context.ProductBrands.Any() )
                 {
                 // Read the JSON file containing the product brands data
                 //..\Infrastructure\Presistence\Data\Seeding\brands.json
@@ -67,7 +67,7 @@ namespace Presistence
 
                 // Deserialize the JSON data into a list of ProductBrand objects
                 var productBrands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
-                if (productBrands is not null && productBrands.Any())
+                if ( productBrands is not null && productBrands.Any() )
                     {
                     // Add the product brands to the database context
                     await _context.ProductBrands.AddRangeAsync(productBrands);
@@ -80,7 +80,7 @@ namespace Presistence
             #region Products Seeding
 
             // Check if the Products table is empty before seeding
-            if (!_context.Products.Any())
+            if ( !_context.Products.Any() )
                 {
                 // Read the JSON file containing the products data
                 //..\Infrastructure\Presistence\Data\Seeding\products.json
@@ -88,7 +88,7 @@ namespace Presistence
 
                 // Deserialize the JSON data into a list of Product objects
                 var products = JsonSerializer.Deserialize<List<Product>>(productsData);
-                if (products is not null && products.Any())
+                if ( products is not null && products.Any() )
                     {
                     // Add the products to the database context
                     await _context.Products.AddRangeAsync(products);
