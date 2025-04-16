@@ -31,10 +31,14 @@ namespace Store.G03.API
 
             #endregion
 
+            #region DI
+
             builder.Services.AddScoped<IDbInitialzer, DbInitialzer>(); // Allowing DI for the DbInitialzer
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // Allowing DI for the UnitOfWork
             builder.Services.AddAutoMapper(typeof(ServiceAssemplyReference).Assembly); // Allowing DI for the AutoMapper
-            builder.Services.AddScoped<IServiceManager, ServiceManager>(); // Allowing DI for the ServiceManager
+            builder.Services.AddScoped<IServiceManager, ServiceManager>(); // Allowing DI for the ServiceManager 
+
+            #endregion
 
             var app = builder.Build();
 
@@ -47,11 +51,13 @@ namespace Store.G03.API
             #endregion
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if ( app.Environment.IsDevelopment() )
                 {
                 app.UseSwagger();
                 app.UseSwaggerUI();
                 }
+
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 
