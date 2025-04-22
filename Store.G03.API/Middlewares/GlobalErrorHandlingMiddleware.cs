@@ -55,6 +55,9 @@ namespace Store.G03.API.Middlewares
                 {
                     NotFoundException => StatusCodes.Status404NotFound,
                     BadRequestException => StatusCodes.Status400BadRequest,
+                    UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                    ValidationException => HandleValidationExceptionAsync((ValidationException) ex, response),
+
                     _ => StatusCodes.Status500InternalServerError
                     };
             context.Response.StatusCode = response.StatusCode;
@@ -74,5 +77,17 @@ namespace Store.G03.API.Middlewares
                 };
             await context.Response.WriteAsJsonAsync(response);
             }
+
+
+
+        private static int HandleValidationExceptionAsync(ValidationException exception, ErrorDetails errorDetails)
+            {
+
+            errorDetails.Errors = exception.Errors;
+
+            return StatusCodes.Status400BadRequest;
+
+            }
+
         }
     }

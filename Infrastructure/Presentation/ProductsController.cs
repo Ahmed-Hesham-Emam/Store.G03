@@ -1,6 +1,7 @@
 ﻿using Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Attributes;
 using Services.Abstractions;
 using Shared;
 using Shared.ErrorModels;
@@ -19,10 +20,10 @@ namespace Presentation
 
         //api/products
         [HttpGet]
-
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginationResponse<ProductResultDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDetails))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDetails))]
+        [Cache(100)]
         public async Task<ActionResult<PaginationResponse<ProductResultDto>>> GetAllProducts([FromQuery] ProductSpecificationsParameters productSpecsParams)
             {
             var result = await serviceManager.ProductService.GetAllProductsAsync(productSpecsParams);
@@ -32,11 +33,12 @@ namespace Presentation
 
         //api/products/1
         [HttpGet("{id}")]
-
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductResultDto))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDetails))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorDetails))]
+        [Cache(100)]
+
         public async Task<ActionResult<ProductResultDto>> GetProductById(int id)
             {
             var result = await serviceManager.ProductService.GetProductByIdAsync(id);
@@ -49,10 +51,11 @@ namespace Presentation
 
         //api/products/brands
         [HttpGet("brands")]
-
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BrandResultDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDetails))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDetails))]
+        [Cache(100)]
+
         public async Task<ActionResult<BrandResultDto>> GetAllBrands()
             {
             var result = await serviceManager.ProductService.GetAllBrandsAsync();
@@ -63,10 +66,11 @@ namespace Presentation
 
         //api/products/types
         [HttpGet("types")]
-
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TypeResultDto>))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDetails))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDetails))]
+        [Cache(100)]
+
         public async Task<ActionResult<TypeResultDto>> GetAllTypes()
             {
             var result = await serviceManager.ProductService.GetAllTypesAsync();
