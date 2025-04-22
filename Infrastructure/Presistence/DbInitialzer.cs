@@ -1,7 +1,10 @@
 ﻿using Domain.Contracts;
 using Domain.Models;
+using Domain.Models.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Data;
+using Presistence.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +17,21 @@ namespace Presistence
     public class DbInitialzer : IDbInitialzer
         {
         private readonly StoreDbContext _context;
+        private readonly StoreIdentityDbContext _storeIdentityDbContext;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public DbInitialzer(StoreDbContext context)
+        public DbInitialzer(
+            StoreDbContext context,
+            StoreIdentityDbContext storeIdentityDbContext,
+            UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager
+            )
             {
             _context = context;
+            _storeIdentityDbContext = storeIdentityDbContext;
+            _userManager = userManager;
+            _roleManager = roleManager;
             }
         public async Task InitialzeAsync()
             {
@@ -101,5 +115,76 @@ namespace Presistence
             #endregion
 
             }
+
+        public async Task InitialzeIdentityAsync()
+            {
+            #region Migrations
+            if ( _storeIdentityDbContext.Database.GetPendingMigrations().Any() )
+                {
+                await _storeIdentityDbContext.Database.MigrateAsync();
+                }
+            #endregion
+
+            #region Seeding
+
+            #region Seeding Roles
+
+            if ( !_roleManager.Roles.Any() )
+                {
+                await _roleManager.CreateAsync(new IdentityRole()
+                    {
+                    Name = "Admin",
+                    });
+                await _roleManager.CreateAsync(new IdentityRole()
+                    {
+                    Name = "SuperAdmin",
+                    });
+                }
+
+
+            #endregion
+
+            #region Seeding Admins
+            if ( !_userManager.Users.Any() )
+                {
+                var SuperAdminUser = new AppUser()
+                    {
+                    DisplayName = "Super Admin",
+                    Email = "SuperAdmin@gmail.com",
+                    UserName = "SuperAdmin",
+                    PhoneNumber = "1234567890",
+                    };
+
+                var AdminUser = new AppUser()
+                    {
+                    DisplayName = "Admin",
+                    Email = "Admin@gmail.com",
+                    UserName = "Admin",
+                    PhoneNumber = "1234567890",
+                    };
+
+                await _userManager.CreateAsync(SuperAdminUser, "Pa$$w0rd");
+                await _userManager.CreateAsync(AdminUser, "Pa$$w0rd");
+
+
+                #region Adding Roles to users
+
+                await _userManager.AddToRoleAsync(SuperAdminUser, "SuperAdmin");
+                await _userManager.AddToRoleAsync(AdminUser, "Admin");
+
+                #endregion
+
+
+
+                }
+            #endregion
+
+
+
+
+            #endregion
+
+            }
+
         }
     }

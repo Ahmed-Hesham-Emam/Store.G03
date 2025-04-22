@@ -1,6 +1,10 @@
 ﻿using Domain.Contracts;
+using Domain.Models.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Presistence;
+using Presistence.Identity;
 using Services;
 using Shared.ErrorModels;
 using Store.G03.API.Middlewares;
@@ -17,6 +21,7 @@ namespace Store.G03.API.Extentions
 
 
             services.AddInfrastructureServices(configuration);
+            services.AddIdentityServices();
             services.AddApplicationServices();
 
             #region BadRequest Response
@@ -49,6 +54,15 @@ namespace Store.G03.API.Extentions
             return services;
             }
 
+        private static IServiceCollection AddIdentityServices(this IServiceCollection services)
+            {
+            services.AddIdentity<AppUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            })
+                .AddEntityFrameworkStores<StoreIdentityDbContext>();
+            return services;
+            }
 
         private static IServiceCollection AddSwaggerServices(this IServiceCollection services)
             {
@@ -56,7 +70,6 @@ namespace Store.G03.API.Extentions
             services.AddSwaggerGen();
             return services;
             }
-
 
         public static async Task<WebApplication> ConfigureMiddlewares(this WebApplication app)
             {
@@ -88,6 +101,7 @@ namespace Store.G03.API.Extentions
             using var scope = app.Services.CreateScope();
             var dbInit = scope.ServiceProvider.GetRequiredService<IDbInitialzer>();
             await dbInit.InitialzeAsync();
+            await dbInit.InitialzeIdentityAsync();
             #endregion
 
             return app;
