@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
@@ -23,6 +24,8 @@ namespace Presentation
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BasketDto))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDetails))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDetails))]
+        [Authorize]
+
         public async Task<IActionResult> GetBasketById(string id)
             {
 
@@ -37,6 +40,7 @@ namespace Presentation
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BasketDto))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDetails))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDetails))]
+        [Authorize]
         public async Task<IActionResult> UpdateBasket(BasketDto basketDto)
             {
             var basket = await serviceManager.BasketService.UpdateBasketAsync(basketDto);
@@ -49,6 +53,8 @@ namespace Presentation
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NoContent))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorDetails))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorDetails))]
+        [Authorize]
+
         public async Task<IActionResult> DeleteBasket(string id)
             {
             await serviceManager.BasketService.DeleteBasketAsync(id);

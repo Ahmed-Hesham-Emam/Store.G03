@@ -55,7 +55,7 @@ namespace Store.G03.API.Middlewares
                 {
                     NotFoundException => StatusCodes.Status404NotFound,
                     BadRequestException => StatusCodes.Status400BadRequest,
-                    UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                    UnAuthorizedException => StatusCodes.Status401Unauthorized,
                     ValidationException => HandleValidationExceptionAsync((ValidationException) ex, response),
 
                     _ => StatusCodes.Status500InternalServerError
