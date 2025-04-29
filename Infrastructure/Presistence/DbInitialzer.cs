@@ -1,6 +1,7 @@
 ﻿using Domain.Contracts;
 using Domain.Models;
 using Domain.Models.Identity;
+using Domain.Models.OrderModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Data;
@@ -110,6 +111,27 @@ namespace Presistence
                     }
                 }
 
+            #endregion
+
+            #region DeliveryMethod Seeding
+
+            // Check if the Products table is empty before seeding
+            if ( !_context.DeliveryMethods.Any() )
+                {
+                // Read the JSON file containing the products data
+                //..\Infrastructure\Presistence\Data\Seeding\products.json
+                var DeliveryMethodsData = await File.ReadAllTextAsync(@"..\Infrastructure\Presistence\Data\Seeding\delivery.json");
+
+                // Deserialize the JSON data into a list of Product objects
+                var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(DeliveryMethodsData);
+                if ( deliveryMethods is not null && deliveryMethods.Any() )
+                    {
+                    // Add the products to the database context
+                    await _context.DeliveryMethods.AddRangeAsync(deliveryMethods);
+                    await _context.SaveChangesAsync();
+                    }
+                }
+
             #endregion 
 
             #endregion
@@ -145,6 +167,7 @@ namespace Presistence
             #endregion
 
             #region Seeding Admins
+
             if ( !_userManager.Users.Any() )
                 {
                 var SuperAdminUser = new AppUser()

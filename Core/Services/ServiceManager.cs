@@ -2,7 +2,10 @@
 using Domain.Contracts;
 using Domain.Models.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Services.Abstractions;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +19,9 @@ namespace Services
         IMapper mapper,
         IBasketRepository basketRepository,
         ICacheRepository cacheRepository,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager,
+        IOptions<JwtOptions> options
+        )
 
         : IServiceManager
 
@@ -26,6 +31,8 @@ namespace Services
 
         public ICacheService CacheService { get; } = new CacheService(cacheRepository);
 
-        public IAuthService AuthService { get; } = new AuthService(userManager);
+        public IAuthService AuthService { get; } = new AuthService(userManager, options);
+
+        public IOrderService OrderService { get; } = new OrderService(mapper, basketRepository, unitOfWork);
         }
     }

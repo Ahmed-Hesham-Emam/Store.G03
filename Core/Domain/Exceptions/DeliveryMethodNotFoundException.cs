@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Exceptions
     {
-    public class ProductNotFoundException(int id)
-        : NotFoundException($"Product with id: {id} not found")
+    public class DeliveryMethodNotFoundException(int id) : NotFoundException($"DeliveryMethod with id: {id} not found")
         {
         }
     }

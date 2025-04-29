@@ -1,13 +1,18 @@
 ﻿using Domain.Contracts;
 using Domain.Models.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Presistence;
 using Presistence.Identity;
 using Services;
+using Shared;
 using Shared.ErrorModels;
 using Store.G03.API.Middlewares;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Store.G03.API.Extentions
@@ -22,7 +27,10 @@ namespace Store.G03.API.Extentions
 
             services.AddInfrastructureServices(configuration);
             services.AddIdentityServices();
-            services.AddApplicationServices();
+            services.AddApplicationServices(configuration);
+            services.ConfigureJwt(configuration);
+
+
 
             #region BadRequest Response
             services.Configure<ApiBehaviorOptions>(options =>
@@ -52,6 +60,34 @@ namespace Store.G03.API.Extentions
             {
             services.AddControllers();
             return services;
+            }
+
+        private static IServiceCollection ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
+            {
+
+            var jwtOptions = configuration.GetSection("JwtOptions").Get<JwtOptions>();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
+                    };
+            });
+
+            return services;
+
             }
 
         private static IServiceCollection AddIdentityServices(this IServiceCollection services)
@@ -87,6 +123,7 @@ namespace Store.G03.API.Extentions
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

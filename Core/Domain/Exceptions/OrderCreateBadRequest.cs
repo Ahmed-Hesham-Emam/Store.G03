@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Exceptions
     {
-    public class ProductNotFoundException(int id)
-        : NotFoundException($"Product with id: {id} not found")
+    public class OrderCreateBadRequest() : BadRequestException("Invalid Operation when creating or updating the Order!")
         {
         }
     }
